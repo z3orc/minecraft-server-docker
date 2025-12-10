@@ -3,22 +3,29 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
+func print_help() {
+	fmt.Printf("usage: %s <executable>\n- executable: Path to server jar file\n", os.Args[0])
+}
+
 func main() {
-	fmt.Println("Hello, World")
+	if len(os.Args) < 2 {
+		fmt.Print("Missing arguments!\n\n")
+		print_help()
+		os.Exit(1)
+	}
 
-	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
-
-	go func() {
-		signal := <-signalChannel
-		fmt.Println("Got signal: ", signal.String())
-		os.Exit(0)
-	}()
-
-	time.Sleep(10 * time.Second)
+	// fmt.Println("Hello, World")
+	//
+	// signalChannel := make(chan os.Signal, 1)
+	// signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
+	//
+	// go func() {
+	// 	signal := <-signalChannel
+	// 	fmt.Println("Got signal: ", signal.String())
+	// 	os.Exit(0)
+	// }()
+	//
+	// time.Sleep(10 * time.Second)
 }
