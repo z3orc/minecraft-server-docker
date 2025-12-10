@@ -79,31 +79,6 @@ func (s *Server) ExitCode() int {
 	return s.cmd.ProcessState.ExitCode()
 }
 
-// func (s *Server) Wait() {
-// 	s.cmd.Wait()
-// }
-//
-// func (s *Server) isRunning() bool {
-// 	if s.cmd.ProcessState == nil {
-// 		return false
-// 	}
-//
-// 	err := s.cmd.Process.Signal(syscall.Signal(0))
-// 	fmt.Println("process returned:", err)
-// 	return true
-// }
-
-// func (s *Server) Wait() {
-// 	for {
-// 		dialTimeout := time.Second * 5
-// 		_, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", "25565"), dialTimeout)
-// 		if err == nil {
-// 			fmt.Println("runner: Server now listening on TCP!")
-// 			return
-// 		}
-// 	}
-// }
-
 // Redirects output of command stdout to provided io.Writer 'dest'.
 func (s *Server) RedirectStdout(dest io.Writer) {
 	go func() {

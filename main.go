@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	InitLogger()
+
 	if runtime.GOOS != "linux" {
 		fmt.Println("error: Program only works on Linux systems")
 		os.Exit(1)
@@ -14,6 +16,10 @@ func main() {
 
 	flags := ParseFlags()
 	fmt.Println("runner: flags=", flags)
+
+	if flags.Debug {
+		SetDebugLogLevel()
+	}
 
 	server, err := NewServer(flags.JarPath)
 	if err != nil {
