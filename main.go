@@ -21,7 +21,7 @@ func main() {
 		SetDebugLogLevel()
 	}
 
-	server, err := NewServer(flags.JarName)
+	server, err := NewServer(flags.dataDir, flags.JarName)
 	if err != nil {
 		slog.Error("failed to initialize server", "err", err)
 		// fmt.Printf("runner: Failed to initialize server: %e", err)
