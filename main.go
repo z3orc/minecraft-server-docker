@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"os/signal"
+	"syscall"
 )
 
 func print_help() {
@@ -16,16 +19,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	// fmt.Println("Hello, World")
-	//
-	// signalChannel := make(chan os.Signal, 1)
-	// signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
-	//
-	// go func() {
-	// 	signal := <-signalChannel
-	// 	fmt.Println("Got signal: ", signal.String())
-	// 	os.Exit(0)
-	// }()
-	//
-	// time.Sleep(10 * time.Second)
+	fmt.Println("runner: Starting server using jar")
+
+	jar_path := os.Args[1]
+	cmd := exec.Command("java", "-jar", jar_path, "-nogui")
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+
+	signalChannel := make(chan os.Signal, 1)
+	signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		signal := <-signalChannel
+		fmt.Println("Got signal: ", signal.String())
+		cmd.Process.Signal(syscall.SIGINT)
+	}()
+
+	cmd.Run()
+	exitCode := cmd.ProcessState.ExitCode()
+	fmt.Println("runner: Server exited with code: ", exitCode)
 }
