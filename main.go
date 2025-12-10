@@ -34,7 +34,10 @@ func main() {
 
 	slog.Info("starting server", "dir", flags.dataDir, "jar", flags.JarName, "timeout", flags.Timeout)
 	// fmt.Printf("runner: Starting server. jar=%s, timeout=%d\n", flags.JarPath, flags.Timeout)
-	server.Run()
+	err = server.Run()
+	if err != nil {
+		slog.Error("failed to wait for server", "err", err)
+	}
 
 	exitCode := server.ExitCode()
 	slog.Info("server exited", "exit code", exitCode)
