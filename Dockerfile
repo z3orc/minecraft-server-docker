@@ -22,9 +22,8 @@ RUN chmod +x entrypoint.sh
 
 ARG UNAME=minecraft
 RUN groupadd -g 1000 -o $UNAME
-RUN useradd -m -u 1000 -g 1000 -o -s /bin/bash $UNAME
+RUN useradd -M -u 1000 -g 1000 -o -s /bin/bash $UNAME
 USER $UNAME
-
 
 ENV SERVER_JAR=server.jar
 ENV TIMEOUT=60
