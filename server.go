@@ -23,8 +23,9 @@ type Server struct {
 // Inits pipes for stdin and stdout.
 //
 // Returns a pointer to struct Server, or error if pipes could not be created.
-func NewServer(jarPath string) (*Server, error) {
-	cmd := exec.Command("java", "-jar", jarPath, "-nogui")
+func NewServer(dataDir string, jarName string) (*Server, error) {
+	cmd := exec.Command("java", "-jar", jarName, "-nogui")
+	cmd.Dir = dataDir
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setpgid: true,
 	}
