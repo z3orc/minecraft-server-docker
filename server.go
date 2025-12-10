@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"net"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -58,15 +57,15 @@ func (s *Server) Run() error {
 		return err
 	}
 
-	for {
-		dialTimeout := time.Second * 5
-		_, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", "25565"), dialTimeout)
-		if err == nil {
-			slog.Info("server now listening on TCP", "port", "25565")
-			// fmt.Println("runner: Server now listening on TCP!")
-			break
-		}
-	}
+	// for {
+	// 	dialTimeout := time.Second * 5
+	// 	_, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", "25565"), dialTimeout)
+	// 	if err == nil {
+	// 		slog.Info("server now listening on TCP", "port", "25565")
+	// 		// fmt.Println("runner: Server now listening on TCP!")
+	// 		break
+	// 	}
+	// }
 
 	return s.cmd.Wait()
 }
