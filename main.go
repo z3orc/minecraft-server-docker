@@ -1,16 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
-	"net"
 	"os"
-	"os/exec"
-	"os/signal"
 	"runtime"
-	"syscall"
-	"time"
 )
 
 func print_help() {
@@ -33,7 +27,6 @@ func parse_args(state *state) {
 	state.JarPath = *jarPtr
 	state.Timeout = *timeoutPtr
 	state.UseSigKill = *useSigKill
-
 }
 
 func main() {
@@ -45,6 +38,15 @@ func main() {
 	state := state{}
 	parse_args(&state)
 	fmt.Println(state)
+
+	server, err := NewServer(state.JarPath)
+	if err != nil {
+		fmt.Printf("runner: Failed to initialize server: %e", err)
+		os.Exit(1)
+	}
+
+	server.RedirectStdout(os.Stdout)
+	server.SignalCatcher(state.Timeout, state.UseSigKill)
 
 	// if len(os.Args) < 3 {
 	// 	fmt.Println("error: Missing arguments!")
@@ -60,69 +62,9 @@ func main() {
 	// 	os.Exit(1)
 	// }
 
-	cmd := exec.Command("java", "-jar", state.JarPath, "-nogui")
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
-	}
-
-	cmdStdin, err := cmd.StdinPipe()
-	if err != nil {
-		fmt.Printf("error: Failed to open Stdin Pipe: %e\n", err)
-		cmd.Process.Kill()
-		os.Exit(-1)
-	}
-
-	cmdStdout, err := cmd.StdoutPipe()
-	if err != nil {
-		fmt.Printf("error: Failed to open Stdout Pipe: %e\n", err)
-		cmd.Process.Kill()
-		os.Exit(-1)
-	}
-
-	go func() {
-		scanner := bufio.NewScanner(cmdStdout)
-		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-		}
-	}()
-
-	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
-
-	go func() {
-		signal := <-signalChannel
-		fmt.Println("runner: Got signal: ", signal.String())
-
-		fmt.Println("runner: Sending 'stop' to server")
-		fmt.Fprintln(cmdStdin, "stop")
-
-		if state.Timeout != 0 {
-			time.Sleep(time.Duration(state.Timeout) * time.Second)
-		}
-		if !state.UseSigKill {
-			fmt.Println("runner: Server has not shut down within the time limit; Sending SIGINT")
-			cmd.Process.Signal(syscall.SIGINT)
-		} else {
-			fmt.Println("runner: Server has not shut down within the time limit; Sending SIGKILL")
-			cmd.Process.Kill()
-		}
-	}()
-
-	go func() {
-		for {
-			dialTimeout := time.Second * 5
-			_, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", "25565"), dialTimeout)
-			if err == nil {
-				fmt.Println("runner: Server now listening on TCP!")
-				return
-			}
-		}
-	}()
-
 	fmt.Printf("runner: Starting server. jar=%s, timeout=%d, cpus=%d\n", state.JarPath, state.Timeout, runtime.NumCPU())
-	cmd.Run()
-
-	exitCode := cmd.ProcessState.ExitCode()
+	server.Run()
+	exitCode := server.ExitCode()
 	fmt.Println("runner: Server exited with code:", exitCode)
 	os.Exit(0)
 }
