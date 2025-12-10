@@ -13,11 +13,16 @@ import (
 )
 
 type Server struct {
-	cmd    *exec.Cmd
-	stdout io.Reader
-	stdin  io.Writer
+	cmd    *exec.Cmd // Pointer to command
+	stdout io.Reader // io.Reader for stdout of command
+	stdin  io.Writer // io.Writer for stdin of command
 }
 
+// NewServer creates a new instance of struct Server, based on provided path of server jar.
+//
+// Inits pipes for stdin and stdout.
+//
+// Returns a pointer to struct Server, or error if pipes could not be created.
 func NewServer(jarPath string) (*Server, error) {
 	cmd := exec.Command("java", "-jar", jarPath, "-nogui")
 	cmd.SysProcAttr = &syscall.SysProcAttr{
@@ -43,6 +48,9 @@ func NewServer(jarPath string) (*Server, error) {
 	return &server, nil
 }
 
+// Runs command/executable found in struct Server.
+//
+// Waits for server to start listening on TCP port 25565, then waits for server to exit.
 func (s *Server) Run() error {
 	err := s.cmd.Start()
 	if err != nil {
@@ -61,6 +69,8 @@ func (s *Server) Run() error {
 	return s.cmd.Wait()
 }
 
+// Returns exit code for command/executable found in struct Server, same as os.ProccessState.ExitCode(),
+// or -1 if no os.ProcessState is found for command.
 func (s *Server) ExitCode() int {
 	if s.cmd.ProcessState == nil {
 		return -1
@@ -94,6 +104,7 @@ func (s *Server) ExitCode() int {
 // 	}
 // }
 
+// Redirects output of command stdout to provided io.Writer 'dest'.
 func (s *Server) RedirectStdout(dest io.Writer) {
 	go func() {
 		scanner := bufio.NewScanner(s.stdout)
@@ -103,8 +114,13 @@ func (s *Server) RedirectStdout(dest io.Writer) {
 	}()
 }
 
+// Catches signals SIGTERM and SIGINT, and tires to stop server using command 'stop',
+// and wait the provided timeout.
+//
+// If timeout is reached, SIGINT or SIGKILL is sent to server process. SIGINT is sent
+// if 'useSigKill' is false, and SIGKILL is sent if 'useSigKill' is true.
 func (s *Server) SignalCatcher(timeout int, useSigKill bool) {
-	signalChannel := make(chan os.Signal, 0)
+	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
 
 	go func() {
