@@ -24,7 +24,6 @@ func main() {
 	server, err := NewServer(flags.dataDir, flags.JarName)
 	if err != nil {
 		slog.Error("failed to initialize server", "err", err)
-		// fmt.Printf("runner: Failed to initialize server: %e", err)
 		os.Exit(1)
 	}
 	slog.Debug("current value of server", "server", server)
@@ -33,15 +32,13 @@ func main() {
 	server.SignalCatcher(flags.Timeout, flags.UseSigKill)
 
 	slog.Info("starting server", "dir", flags.dataDir, "jar", flags.JarName, "timeout", flags.Timeout)
-	// fmt.Printf("runner: Starting server. jar=%s, timeout=%d\n", flags.JarPath, flags.Timeout)
 	err = server.Run()
 	if err != nil {
-		slog.Error("failed to run server", "err", err)
+		slog.Error("failed to start server", "err", err)
 	}
 
 	exitCode := server.ExitCode()
 	slog.Info("server exited", "exit code", exitCode)
 
-	// fmt.Println("runner: Server exited with code:", exitCode)
 	os.Exit(0)
 }
