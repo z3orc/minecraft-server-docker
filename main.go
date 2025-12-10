@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
 	"runtime"
 )
@@ -10,12 +10,12 @@ func main() {
 	InitLogger()
 
 	if runtime.GOOS != "linux" {
-		fmt.Println("error: Program only works on Linux systems")
+		slog.Error("program only works on Linux systems", "GOOS", runtime.GOOS)
 		os.Exit(1)
 	}
 
 	flags := ParseFlags()
-	fmt.Println("runner: flags=", flags)
+	slog.Debug("current value of flags", "flags", flags)
 
 	if flags.Debug {
 		SetDebugLogLevel()
@@ -23,18 +23,22 @@ func main() {
 
 	server, err := NewServer(flags.JarPath)
 	if err != nil {
-		fmt.Printf("runner: Failed to initialize server: %e", err)
+		slog.Error("failed to initialize server", "err", err)
+		// fmt.Printf("runner: Failed to initialize server: %e", err)
 		os.Exit(1)
 	}
-	fmt.Println("runner: server=", server)
+	slog.Debug("current value of server", "server", server)
 
 	server.RedirectStdout(os.Stdout)
 	server.SignalCatcher(flags.Timeout, flags.UseSigKill)
 
-	fmt.Printf("runner: Starting server. jar=%s, timeout=%d\n", flags.JarPath, flags.Timeout)
+	slog.Info("starting server", "jar", flags.JarPath, "timeout", flags.Timeout)
+	// fmt.Printf("runner: Starting server. jar=%s, timeout=%d\n", flags.JarPath, flags.Timeout)
 	server.Run()
 
 	exitCode := server.ExitCode()
-	fmt.Println("runner: Server exited with code:", exitCode)
+	slog.Info("server exited", "exit code", exitCode)
+
+	// fmt.Println("runner: Server exited with code:", exitCode)
 	os.Exit(0)
 }

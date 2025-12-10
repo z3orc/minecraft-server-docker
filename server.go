@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"os"
 	"os/exec"
@@ -61,7 +62,8 @@ func (s *Server) Run() error {
 		dialTimeout := time.Second * 5
 		_, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", "25565"), dialTimeout)
 		if err == nil {
-			fmt.Println("runner: Server now listening on TCP!")
+			slog.Info("server now listening on TCP", "port", "25565")
+			// fmt.Println("runner: Server now listening on TCP!")
 			break
 		}
 	}
@@ -101,18 +103,22 @@ func (s *Server) SignalCatcher(timeout int, useSigKill bool) {
 	go func() {
 		signal := <-signalChannel
 		fmt.Println("runner: Got signal: ", signal.String())
+		slog.Info("received signal", "signal", signal)
 
-		fmt.Println("runner: Sending 'stop' to server")
+		// fmt.Println("runner: Sending 'stop' to server")
+		slog.Info("sending command 'stop' to server")
 		fmt.Fprintln(s.stdin, "stop")
 
 		if timeout != -1 {
 			time.Sleep(time.Duration(timeout) * time.Second)
 		}
 		if !useSigKill {
-			fmt.Println("runner: Server has not shut down within the time limit; Sending SIGINT")
+			slog.Warn("server has not shut down within time limit; sending SIGINT")
+			// fmt.Println("runner: Server has not shut down within the time limit; Sending SIGINT")
 			s.cmd.Process.Signal(syscall.SIGINT)
 		} else {
-			fmt.Println("runner: Server has not shut down within the time limit; Sending SIGKILL")
+			slog.Warn("server has not shut down within time limit; sending SIGKILL")
+			// fmt.Println("runner: Server has not shut down within the time limit; Sending SIGKILL")
 			s.cmd.Process.Kill()
 		}
 	}()
