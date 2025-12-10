@@ -6,10 +6,12 @@ get-jar: build
 run: build
 	cd ./out/ && ./runner server.jar 60
 
-
 build:
 	mkdir -p ./out/
 	go build -o ./out/runner
+
+build-docker:
+	docker build -t z3orc/minecraft-server-docker .
 
 clean:
 	rm -rf ./out

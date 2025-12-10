@@ -36,7 +36,7 @@ func main() {
 	// fmt.Printf("runner: Starting server. jar=%s, timeout=%d\n", flags.JarPath, flags.Timeout)
 	err = server.Run()
 	if err != nil {
-		slog.Error("failed to wait for server", "err", err)
+		slog.Error("failed to run server", "err", err)
 	}
 
 	exitCode := server.ExitCode()
