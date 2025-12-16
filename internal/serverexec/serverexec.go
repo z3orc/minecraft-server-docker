@@ -1,4 +1,4 @@
-package main
+package serverexec
 
 import (
 	"bufio"
@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-type Server struct {
+type ServerExec struct {
 	cmd    *exec.Cmd // Pointer to command
 	stdout io.Reader // io.Reader for stdout of command
 	stdin  io.Writer // io.Writer for stdin of command
@@ -23,7 +23,7 @@ type Server struct {
 // Inits pipes for stdin and stdout.
 //
 // Returns a pointer to struct Server, or error if pipes could not be created.
-func NewServer(dataDir string, jarName string) (*Server, error) {
+func New(dataDir string, jarName string) (*ServerExec, error) {
 	cmd := exec.Command("java", "-jar", jarName, "-nogui")
 	cmd.Dir = dataDir
 	cmd.SysProcAttr = &syscall.SysProcAttr{
@@ -40,7 +40,7 @@ func NewServer(dataDir string, jarName string) (*Server, error) {
 		return nil, err
 	}
 
-	server := Server{
+	server := ServerExec{
 		cmd:    cmd,
 		stdin:  cmdStdin,
 		stdout: cmdStdout,
@@ -52,7 +52,7 @@ func NewServer(dataDir string, jarName string) (*Server, error) {
 // Runs command/executable found in struct Server.
 //
 // Waits for server to start listening on TCP port 25565, then waits for server to exit.
-func (s *Server) Run() error {
+func (s *ServerExec) Run() error {
 	err := s.cmd.Start()
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (s *Server) Run() error {
 
 // Returns exit code for command/executable found in struct Server, same as os.ProccessState.ExitCode(),
 // or -1 if no os.ProcessState is found for command.
-func (s *Server) ExitCode() int {
+func (s *ServerExec) ExitCode() int {
 	if s.cmd.ProcessState == nil {
 		return -1
 	}
@@ -72,7 +72,7 @@ func (s *Server) ExitCode() int {
 }
 
 // Redirects output of command stdout to provided io.Writer 'dest'.
-func (s *Server) RedirectStdout(dest io.Writer) {
+func (s *ServerExec) RedirectStdout(dest io.Writer) {
 	go func() {
 		scanner := bufio.NewScanner(s.stdout)
 		for scanner.Scan() {
@@ -86,7 +86,7 @@ func (s *Server) RedirectStdout(dest io.Writer) {
 //
 // If timeout is reached, SIGINT or SIGKILL is sent to server process. SIGINT is sent
 // if 'useSigKill' is false, and SIGKILL is sent if 'useSigKill' is true.
-func (s *Server) SignalCatcher(timeout int, useSigKill bool) {
+func (s *ServerExec) SignalCatcher(timeout int, useSigKill bool) {
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(signalChannel, syscall.SIGTERM, syscall.SIGINT)
 

@@ -1,15 +1,14 @@
-package main
+package logger
 
 import (
 	"log"
 	"log/slog"
-	"os"
 )
 
-func InitLogger() {
+func Init() {
 	log.SetPrefix("runner: ")
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
+	// logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	// slog.SetDefault(logger)
 
 	slog.SetLogLoggerLevel(slog.LevelInfo)
 }
