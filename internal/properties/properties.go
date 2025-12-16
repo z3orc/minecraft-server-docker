@@ -18,11 +18,13 @@ var propertyTypes = map[string]string{
 	"WHITE_LIST":    "white-list",
 }
 
+// TODO: docs
 type Properties struct {
 	path   string
 	values []string
 }
 
+// TODO: docs
 func New(path string) *Properties {
 	return &Properties{
 		path:   path,
@@ -30,6 +32,7 @@ func New(path string) *Properties {
 	}
 }
 
+// TODO: docs
 func (p *Properties) LoadFromEnv() error {
 	for k := range propertyTypes {
 		value := os.Getenv(k)
@@ -47,6 +50,7 @@ func (p *Properties) LoadFromEnv() error {
 	return nil
 }
 
+// TODO: docs
 func (p *Properties) Add(prop string) error {
 	parsedProp, err := parseProp(prop)
 	if err != nil {
@@ -57,6 +61,7 @@ func (p *Properties) Add(prop string) error {
 	return nil
 }
 
+// TODO: docs
 func (p *Properties) Write() error {
 	file, err := os.Create(p.path)
 	if err != nil {
@@ -81,6 +86,7 @@ func (p *Properties) Write() error {
 	return nil
 }
 
+// TODO: docs
 func parseProp(prop string) (string, error) {
 	vals := strings.Split(prop, "=")
 
@@ -96,6 +102,7 @@ func parseProp(prop string) (string, error) {
 	return fmt.Sprintf("%s=%s", key, parse(vals[1])), nil
 }
 
+// TODO: docs
 func parse(key string) string {
 	return strings.Map(func(r rune) rune {
 		switch r {
