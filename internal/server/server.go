@@ -1,0 +1,79 @@
+package server
+
+import (
+	"fmt"
+	"log/slog"
+	"os"
+	"path/filepath"
+
+	"github.com/z3orc/minecraft-server-docker/internal/fabric"
+	"github.com/z3orc/minecraft-server-docker/internal/jar"
+	"github.com/z3orc/minecraft-server-docker/internal/properties"
+)
+
+type Server struct {
+	GameVersion string                 // game version
+	DataDir     string                 // path of data directory
+	JarName     string                 // name of jar
+	Properties  *properties.Properties // server properties
+	serverExec  *ServerExec            // server executor
+}
+
+func New(gameVersion string, dataDir string, jarName string, timeout int, useSigKill bool) (*Server, error) {
+	serverExec, err := NewServerExec(dataDir, jarName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize server exec: %e", err)
+	}
+
+	serverExec.RedirectStdout(os.Stdout)
+	serverExec.SignalCatcher(timeout, useSigKill)
+
+	props := properties.New(filepath.Join(dataDir, "server.properties"))
+	err = props.LoadFromEnv()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load values for server.properties from env: %e", err)
+	}
+
+	return &Server{
+		GameVersion: gameVersion,
+		JarName:     jarName,
+		DataDir:     dataDir,
+		Properties:  props,
+		serverExec:  serverExec,
+	}, nil
+}
+
+func (s *Server) Start() error {
+	slog.Info("preparing to start server")
+
+	// Write properties from env to file
+	slog.Info("writing properties to disk")
+	err := s.Properties.Write()
+	if err != nil {
+		return fmt.Errorf("failed to write values for server.properties to disk: %e", err)
+	}
+
+	// Download server jar if it does not exist
+	_, err = os.Stat(filepath.Join(s.DataDir, s.JarName))
+	if err != nil && os.IsNotExist(err) {
+		slog.Info("downloading server jar from fabric", "version", s.GameVersion, "jar", s.JarName)
+
+		url, err := fabric.GetDownloadUrl(s.GameVersion)
+		if err != nil {
+			return fmt.Errorf("failed get download url from fabric: %e", err)
+		}
+
+		err = jar.DownloadServerJar(url, s.DataDir, s.JarName)
+		if err != nil {
+			return fmt.Errorf("error while downloading server jar: %e", err)
+		}
+	} else if err != nil {
+		return fmt.Errorf("failed to check if file '%s' exists: %e", s.JarName, err)
+	} else {
+		slog.Info("server jar already exists. using existing jar", "jar", s.JarName)
+	}
+
+	// Run server based on serverExec
+	slog.Info("starting server")
+	return s.serverExec.Run()
+}
