@@ -96,6 +96,7 @@ func main() {
 	err = server.Run()
 	if err != nil {
 		slog.Error("failed to start server:", "err", err)
+		os.Exit(1)
 	}
 
 	exitCode := server.ExitCode()
