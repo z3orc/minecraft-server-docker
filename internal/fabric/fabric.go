@@ -13,6 +13,7 @@ func findLatestCompatibleLoader(gameVersion string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get list of loaders from fabric api: %e", err)
 	}
+	defer resp.Body.Close()
 
 	loaderResp := loaderResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&loaderResp)
@@ -33,6 +34,7 @@ func findLatestInstaller() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to get list installer versions from fabric api: %e", err)
 	}
+	defer resp.Body.Close()
 
 	installers := installerResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&installers)
