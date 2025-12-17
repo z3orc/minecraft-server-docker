@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/z3orc/minecraft-server-docker/internal/fabric"
+	"github.com/z3orc/minecraft-server-docker/internal/jar"
 	"github.com/z3orc/minecraft-server-docker/internal/logger"
 	"github.com/z3orc/minecraft-server-docker/internal/properties"
 	"github.com/z3orc/minecraft-server-docker/internal/serverexec"
@@ -65,6 +67,18 @@ func main() {
 	err = props.Write()
 	if err != nil {
 		slog.Error("failed to write values for server.properties to disk:", "err", err)
+		os.Exit(1)
+	}
+
+	url, err := fabric.GetDownloadUrl("1.21.10")
+	if err != nil {
+		slog.Error("failed get download url from fabric:", "err", err)
+		os.Exit(1)
+	}
+
+	err = jar.DownloadServerJar(url, flags.dataDir)
+	if err != nil {
+		slog.Error("error while downloading server jar", "err", err)
 		os.Exit(1)
 	}
 
