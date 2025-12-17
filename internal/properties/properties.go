@@ -9,14 +9,6 @@ import (
 	"unicode"
 )
 
-var propertyTypes = map[string]string{
-	"DIFFICULTY":    "difficulty",
-	"GAMEMODE":      "gamemode",
-	"MAX_PLAYERS":   "max-players",
-	"SERVER_PORT":   "server-port",
-	"VIEW_DISTANCE": "view-distance",
-	"WHITE_LIST":    "white-list",
-}
 
 // TODO: docs
 type Properties struct {
