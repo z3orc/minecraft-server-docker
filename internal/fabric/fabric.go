@@ -4,17 +4,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/z3orc/minecraft-server-docker/internal/httpclient"
 )
 
 // Returns the version of the latest compatible fabric loader based on
 // provided game version 'gameVersion'
 func findLatestCompatibleLoader(gameVersion string) (string, error) {
+	client := httpclient.New()
 	url := fmt.Sprintf("%s/v2/versions/loader/%s", FABRIC_API_BASE_URL, gameVersion)
-	resp, err := http.Get(url)
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("failed to get list of loaders from fabric api: %e", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("got unexpected status code from fabric api: %d", resp.StatusCode)
+	}
 
 	loaderResp := loaderResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&loaderResp)
@@ -31,12 +39,18 @@ func findLatestCompatibleLoader(gameVersion string) (string, error) {
 
 // Returns the version number of the latest installer version.
 func findLatestInstaller() (string, error) {
+	client := httpclient.New()
 	url := fmt.Sprintf("%s/v2/versions/installer", FABRIC_API_BASE_URL)
-	resp, err := http.Get(url)
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("failed to get list installer versions from fabric api: %e", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("got unexpected status code from fabric api: %d", resp.StatusCode)
+	}
 
 	installers := installerResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&installers)
