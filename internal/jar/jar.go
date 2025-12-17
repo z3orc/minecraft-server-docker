@@ -6,7 +6,7 @@ import (
 )
 
 func DownloadServerJar(url string, destDir string) error {
-	cmd := exec.Command("wget", url, "-O server.jar")
+	cmd := exec.Command("wget", url, "-O", "server.jar")
 	cmd.Dir = destDir
 	err := cmd.Run()
 	if err != nil {
