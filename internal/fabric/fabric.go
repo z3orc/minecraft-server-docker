@@ -9,7 +9,8 @@ import (
 // Returns the version of the latest compatible fabric loader based on
 // provided game version 'gameVersion'
 func findLatestCompatibleLoader(gameVersion string) (string, error) {
-	resp, err := http.Get(fmt.Sprintf("https://meta.fabricmc.net/v2/versions/loader/%s", gameVersion))
+	url := fmt.Sprintf("%s/v2/versions/loader/%s", FABRIC_API_BASE_URL, gameVersion)
+	resp, err := http.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("failed to get list of loaders from fabric api: %e", err)
 	}
@@ -30,7 +31,8 @@ func findLatestCompatibleLoader(gameVersion string) (string, error) {
 
 // Returns the version number of the latest installer version.
 func findLatestInstaller() (string, error) {
-	resp, err := http.Get("https://meta.fabricmc.net/v2/versions/installer")
+	url := fmt.Sprintf("%s/v2/versions/installer", FABRIC_API_BASE_URL)
+	resp, err := http.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("failed to get list installer versions from fabric api: %e", err)
 	}
@@ -60,6 +62,6 @@ func GetDownloadUrl(gameVersion string) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("https://meta.fabricmc.net/v2/versions/loader/%s/%s/%s/server/jar",
-		gameVersion, loaderVersion, installerVersion), nil
+	return fmt.Sprintf("%s/v2/versions/loader/%s/%s/%s/server/jar",
+		FABRIC_API_BASE_URL, gameVersion, loaderVersion, installerVersion), nil
 }
