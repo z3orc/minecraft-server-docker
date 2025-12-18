@@ -90,7 +90,7 @@ func (s *ServerExec) SignalCatcher(timeout int, useSigKill bool) {
 
 	go func() {
 		signal := <-signalChannel
-		fmt.Println("runner: Got signal: ", signal.String())
+		// fmt.Println("runner: Got signal: ", signal.String())
 		slog.Info("received signal", "signal", signal)
 
 		// fmt.Println("runner: Sending 'stop' to server")

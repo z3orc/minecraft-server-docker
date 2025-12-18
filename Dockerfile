@@ -10,12 +10,18 @@ COPY ./ ./
 RUN apk add --no-cache make
 RUN make build
 
-# Create container
+# Create image
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 COPY --from=build /app/out/runner /app
 COPY --from=build /app/entrypoint.sh /app
+
+# Set ENVs
+ENV DATA_DIR=/data
+ENV SERVER_JAR=server.jar
+ENV TIMEOUT=60
+ENV USE_SIGKILL=false
 
 # RUN chmod +x runner
 RUN chmod +x entrypoint.sh
@@ -25,11 +31,8 @@ RUN groupadd -g 1000 -o $UNAME
 RUN useradd -M -u 1000 -g 1000 -o -s /bin/bash $UNAME
 USER $UNAME
 
-ENV SERVER_JAR=server.jar
-ENV TIMEOUT=60
-ENV USE_SIGKILL=false
-
 WORKDIR /data
 
-ENTRYPOINT [ "/app/entrypoint.sh" ]
+ENTRYPOINT [ "/app/runner" ]
 
+# ENTRYPOINT [ "/app/entrypoint.sh" ]
