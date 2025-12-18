@@ -13,6 +13,7 @@ import (
 type flags struct {
 	gameVersion string
 	dataDir     string
+	memory      string
 	jarName     string
 	timeout     int
 	useSigKill  bool
@@ -28,6 +29,9 @@ func parseFlags() *flags {
 
 	flag.StringVar(&flags.dataDir, "dir", "./",
 		"Directory of server files. This should be the same location as the server jar.")
+
+	flag.StringVar(&flags.dataDir, "memory", "1G",
+		"How much memory to allocate to the server. Example: 1000M or 1G")
 
 	flag.StringVar(&flags.jarName, "jar", "server.jar",
 		"Name of server jar that the runner will use")
@@ -60,7 +64,7 @@ func main() {
 	slog.Debug("value of flags", "flags", flags)
 
 	slog.Debug("flags", "version", flags.gameVersion, "dir", flags.dataDir, "jar", flags.jarName, "timeout", flags.timeout, "useSigKill", flags.useSigKill, "debug", flags.debug)
-	s, err := server.New(flags.gameVersion, flags.dataDir, flags.jarName, flags.timeout, flags.useSigKill)
+	s, err := server.New(flags.gameVersion, flags.dataDir, flags.memory, flags.jarName, flags.timeout, flags.useSigKill)
 	if err != nil {
 		slog.Error("failed to create server instance:", "err", err)
 		os.Exit(1)

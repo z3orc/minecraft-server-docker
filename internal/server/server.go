@@ -16,13 +16,14 @@ import (
 type Server struct {
 	GameVersion string                 // game version
 	DataDir     string                 // path of data directory
+	Memory      string                 // mount of memory allocated to the JVM
 	JarName     string                 // name of jar
 	Properties  *properties.Properties // server properties
 	serverExec  *ServerExec            // server executor
 }
 
-func New(gameVersion string, dataDir string, jarName string, timeout int, useSigKill bool) (*Server, error) {
-	serverExec, err := NewServerExec(dataDir, jarName)
+func New(gameVersion string, dataDir string, memory string, jarName string, timeout int, useSigKill bool) (*Server, error) {
+	serverExec, err := NewServerExec(dataDir, jarName, memory)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize server exec: %e", err)
 	}
@@ -39,6 +40,7 @@ func New(gameVersion string, dataDir string, jarName string, timeout int, useSig
 	return &Server{
 		GameVersion: gameVersion,
 		JarName:     jarName,
+		Memory:      memory,
 		DataDir:     dataDir,
 		Properties:  props,
 		serverExec:  serverExec,
