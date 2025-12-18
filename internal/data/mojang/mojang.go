@@ -18,7 +18,7 @@ func GetPlayerProfile(username string) (*Profile, error) {
 
 	resp, err := client.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user profile from mojang api: %e", err)
+		return nil, fmt.Errorf("failed to get user profile from mojang api: %s", err)
 	}
 	defer resp.Body.Close()
 
@@ -29,7 +29,7 @@ func GetPlayerProfile(username string) (*Profile, error) {
 	profile := Profile{}
 	err = json.NewDecoder(resp.Body).Decode(&profile)
 	if err != nil {
-		return nil, fmt.Errorf("failed decode user profile from mojang api: %e", err)
+		return nil, fmt.Errorf("failed decode user profile from mojang api: %s", err)
 	}
 
 	return &profile, nil

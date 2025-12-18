@@ -16,7 +16,7 @@ func findLatestCompatibleLoader(gameVersion string) (string, error) {
 
 	resp, err := client.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("failed to get list of loaders from fabric api: %e", err)
+		return "", fmt.Errorf("failed to get list of loaders from fabric api: %s", err)
 	}
 	defer resp.Body.Close()
 
@@ -27,7 +27,7 @@ func findLatestCompatibleLoader(gameVersion string) (string, error) {
 	loaderResp := loaderResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&loaderResp)
 	if err != nil {
-		return "", fmt.Errorf("failed decode list of loaders fabric api: %e", err)
+		return "", fmt.Errorf("failed decode list of loaders fabric api: %s", err)
 	}
 
 	if len(loaderResp) <= 0 {
@@ -44,7 +44,7 @@ func findLatestInstaller() (string, error) {
 
 	resp, err := client.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("failed to get list installer versions from fabric api: %e", err)
+		return "", fmt.Errorf("failed to get list installer versions from fabric api: %s", err)
 	}
 	defer resp.Body.Close()
 
@@ -55,7 +55,7 @@ func findLatestInstaller() (string, error) {
 	installers := installerResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&installers)
 	if err != nil {
-		return "", fmt.Errorf("failed decode list of installer versions from fabric api: %e", err)
+		return "", fmt.Errorf("failed decode list of installer versions from fabric api: %s", err)
 	}
 
 	if len(installers) <= 0 {

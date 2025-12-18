@@ -25,7 +25,7 @@ type Server struct {
 func New(gameVersion string, dataDir string, memory string, jarName string, timeout int, useSigKill bool) (*Server, error) {
 	serverExec, err := NewServerExec(dataDir, jarName, memory)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize server exec: %e", err)
+		return nil, fmt.Errorf("failed to initialize server exec: %s", err)
 	}
 
 	serverExec.RedirectStdout(os.Stdout)
@@ -34,7 +34,7 @@ func New(gameVersion string, dataDir string, memory string, jarName string, time
 	props := properties.New(filepath.Join(dataDir, "server.properties"))
 	err = props.LoadFromEnv()
 	if err != nil {
-		return nil, fmt.Errorf("failed to load values for server.properties from env: %e", err)
+		return nil, fmt.Errorf("failed to load values for server.properties from env: %s", err)
 	}
 
 	return &Server{
@@ -54,7 +54,7 @@ func (s *Server) Start() error {
 	slog.Info("writing properties to disk")
 	err := s.Properties.Write()
 	if err != nil {
-		return fmt.Errorf("failed to write values for server.properties to disk: %e", err)
+		return fmt.Errorf("failed to write values for server.properties to disk: %s", err)
 	}
 
 	// Download server jar if it does not exist
@@ -64,15 +64,15 @@ func (s *Server) Start() error {
 
 		url, err := fabric.GetDownloadUrl(s.GameVersion)
 		if err != nil {
-			return fmt.Errorf("failed get download url from fabric: %e", err)
+			return fmt.Errorf("failed get download url from fabric: %s", err)
 		}
 
 		err = jar.DownloadServerJar(url, s.DataDir, s.JarName)
 		if err != nil {
-			return fmt.Errorf("error while downloading server jar: %e", err)
+			return fmt.Errorf("error while downloading server jar: %s", err)
 		}
 	} else if err != nil {
-		return fmt.Errorf("failed to check if file '%s' exists: %e", s.JarName, err)
+		return fmt.Errorf("failed to check if file '%s' exists: %s", s.JarName, err)
 	} else {
 		slog.Info("server jar already exists. using existing jar", "jar", s.JarName)
 	}

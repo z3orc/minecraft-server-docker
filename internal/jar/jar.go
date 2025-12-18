@@ -10,7 +10,7 @@ func DownloadServerJar(url string, destDir string, jarName string) error {
 	cmd.Dir = destDir
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("failed to download server jar from %s: %e", url, err)
+		return fmt.Errorf("failed to download server jar from %s: %s", url, err)
 	}
 
 	return nil
