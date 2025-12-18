@@ -87,9 +87,10 @@ func AddPlayerToList(username string, listType PlayerList, dir string) error {
 		return err
 	}
 
-	if listType == WHITELIST {
+	switch listType {
+	case WHITELIST:
 		playerList = append(playerList.(Whitelist), WhitelistEntry{UUID: player.Id.String(), Name: player.Name})
-	} else if listType == OPS_LIST {
+	case OPS_LIST:
 		playerList = append(playerList.(OpsList),
 			OpsListEntry{UUID: player.Id.String(), Name: player.Name, Level: 4, BypassesPlayerLimit: false})
 	}
@@ -114,7 +115,7 @@ func AddPlayerToWhitelist(username string, list PlayerList, dir string) error {
 
 	for _, player := range playerList {
 		if strings.EqualFold(player.Name, username) {
-			slog.Debug("player already in whitelist", "username", username)
+			slog.Info("player already in whitelist", "username", username)
 			return nil
 		}
 	}
@@ -145,7 +146,7 @@ func AddPlayerToOpsList(username string, list PlayerList, dir string) error {
 
 	for _, player := range playerList {
 		if strings.EqualFold(player.Name, username) {
-			slog.Debug("player already in ops", "username", username)
+			slog.Info("player already in ops", "username", username)
 			return nil
 		}
 	}
