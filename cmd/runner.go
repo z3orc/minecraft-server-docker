@@ -30,7 +30,7 @@ func parseFlags() *flags {
 	flag.StringVar(&flags.dataDir, "dir", "./",
 		"Directory of server files. This should be the same location as the server jar.")
 
-	flag.StringVar(&flags.dataDir, "memory", "1G",
+	flag.StringVar(&flags.memory, "memory", "1G",
 		"How much memory to allocate to the server. Example: 1000M or 1G")
 
 	flag.StringVar(&flags.jarName, "jar", "server.jar",
