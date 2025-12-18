@@ -24,7 +24,7 @@ type ServerExec struct {
 //
 // Returns a pointer to struct Server, or error if pipes could not be created.
 func NewServerExec(dataDir string, jarName string, memory string) (*ServerExec, error) {
-	cmd := exec.Command("java", "-Xms", memory, "-Xmx", memory, "-jar", jarName, "-nogui")
+	cmd := exec.Command("java", "-Xms"+memory, "-Xmx"+memory, "-jar", jarName, "-nogui")
 	cmd.Dir = dataDir
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Setpgid: true,
