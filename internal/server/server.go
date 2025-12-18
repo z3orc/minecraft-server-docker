@@ -83,6 +83,7 @@ func (s *Server) Start() error {
 	if len(ops) > 0 {
 		usernames := strings.SplitSeq(ops, ",")
 		for username := range usernames {
+			username = strings.TrimSpace(username)
 			err := management.AddPlayerToOpsList(username, management.OPS_LIST, s.DataDir)
 			if err != nil {
 				return err
@@ -96,6 +97,7 @@ func (s *Server) Start() error {
 	if len(ops) > 0 {
 		usernames := strings.SplitSeq(whitelist, ",")
 		for username := range usernames {
+			username = strings.TrimSpace(username)
 			err := management.AddPlayerToWhitelist(username, management.WHITELIST, s.DataDir)
 			if err != nil {
 				return err
