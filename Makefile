@@ -8,7 +8,7 @@ run: build
 
 build:
 	mkdir -p ./out/
-	go build -o ./out/runner
+	go build -o ./out/runner ./cmd/runner.go
 
 build-docker:
 	docker build -t z3orc/minecraft-server-docker .
