@@ -1,4 +1,4 @@
-package runner
+package main
 
 import (
 	"flag"
@@ -42,8 +42,6 @@ func parseFlags() *flags {
 
 	flag.Parse()
 
-	println("sigkill:", flags.useSigKill)
-
 	return &flags
 }
 
@@ -61,41 +59,6 @@ func main() {
 	}
 	slog.Debug("value of flags", "flags", flags)
 
-	// props := properties.New(filepath.Join(flags.dataDir, "server.properties"))
-	// err := props.LoadFromEnv()
-	// if err != nil {
-	// 	slog.Error("failed to load values for server.properties from env:", "err", err)
-	// 	os.Exit(1)
-	// }
-
-	// err = props.Write()
-	// if err != nil {
-	// 	slog.Error("failed to write values for server.properties to disk:", "err", err)
-	// 	os.Exit(1)
-	// }
-
-	// url, err := fabric.GetDownloadUrl("1.21.10")
-	// if err != nil {
-	// 	slog.Error("failed get download url from fabric:", "err", err)
-	// 	os.Exit(1)
-	// }
-
-	// err = jar.DownloadServerJar(url, flags.dataDir)
-	// if err != nil {
-	// 	slog.Error("error while downloading server jar", "err", err)
-	// 	os.Exit(1)
-	// }
-
-	// server, err := serverexec.New(flags.dataDir, flags.JarName)
-	// if err != nil {
-	// 	slog.Error("failed to initialize server:", "err", err)
-	// 	os.Exit(1)
-	// }
-	// slog.Debug("current value of server", "server", server)
-
-	// server.RedirectStdout(os.Stdout)
-	// server.SignalCatcher(flags.Timeout, flags.UseSigKill)
-
 	slog.Debug("flags", "version", flags.gameVersion, "dir", flags.dataDir, "jar", flags.jarName, "timeout", flags.timeout, "useSigKill", flags.useSigKill, "debug", flags.debug)
 	s, err := server.New(flags.gameVersion, flags.dataDir, flags.jarName, flags.timeout, flags.useSigKill)
 	if err != nil {
@@ -108,9 +71,6 @@ func main() {
 		slog.Error("failed to start server:", "err", err)
 		os.Exit(1)
 	}
-
-	// exitCode := server.ExitCode()
-	// slog.Info("server exited", "exit code", exitCode)
 
 	os.Exit(0)
 }
