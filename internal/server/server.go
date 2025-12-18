@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/z3orc/minecraft-server-docker/internal/fabric"
+	"github.com/z3orc/minecraft-server-docker/internal/data/fabric"
 	"github.com/z3orc/minecraft-server-docker/internal/jar"
-	"github.com/z3orc/minecraft-server-docker/internal/properties"
+	"github.com/z3orc/minecraft-server-docker/internal/minecraft/properties"
 )
 
 type Server struct {

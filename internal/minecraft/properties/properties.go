@@ -9,7 +9,6 @@ import (
 	"unicode"
 )
 
-
 // TODO: docs
 type Properties struct {
 	path   string

@@ -49,9 +49,7 @@ func NewServerExec(dataDir string, jarName string) (*ServerExec, error) {
 	return &server, nil
 }
 
-// Runs command/executable found in struct Server.
-//
-// Waits for server to start listening on TCP port 25565, then waits for server to exit.
+// Runs command/executable found in struct ServerExec.
 func (s *ServerExec) Run() error {
 	err := s.cmd.Start()
 	if err != nil {
@@ -103,11 +101,11 @@ func (s *ServerExec) SignalCatcher(timeout int, useSigKill bool) {
 			time.Sleep(time.Duration(timeout) * time.Second)
 		}
 		if !useSigKill {
-			slog.Warn("server has not shut down within time limit; sending SIGINT")
+			slog.Warn("server has not shut down within time limit. sending SIGINT")
 			// fmt.Println("runner: Server has not shut down within the time limit; Sending SIGINT")
 			s.cmd.Process.Signal(syscall.SIGINT)
 		} else {
-			slog.Warn("server has not shut down within time limit; sending SIGKILL")
+			slog.Warn("server has not shut down within time limit. sending SIGKILL")
 			// fmt.Println("runner: Server has not shut down within the time limit; Sending SIGKILL")
 			s.cmd.Process.Kill()
 		}
