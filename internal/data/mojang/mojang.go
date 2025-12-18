@@ -3,6 +3,7 @@ package mojang
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/z3orc/minecraft-server-docker/internal/httpclient"
@@ -13,6 +14,8 @@ func GetPlayerProfile(username string) (*Profile, error) {
 	client := httpclient.New()
 	url := fmt.Sprintf("%s/users/profiles/minecraft/%s", MOJANG_API_BASE_URL, username)
 
+	slog.Debug("getting user profile from mojang", "username", username)
+
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user profile from mojang api: %e", err)
@@ -20,7 +23,7 @@ func GetPlayerProfile(username string) (*Profile, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("got unexpected status code from mojang api: %d", resp.StatusCode)
+		return nil, fmt.Errorf("got unexpected status code for username '%s' from mojang api: %d", username, resp.StatusCode)
 	}
 
 	profile := Profile{}

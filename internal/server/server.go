@@ -5,9 +5,11 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/z3orc/minecraft-server-docker/internal/data/fabric"
 	"github.com/z3orc/minecraft-server-docker/internal/jar"
+	"github.com/z3orc/minecraft-server-docker/internal/minecraft/management"
 	"github.com/z3orc/minecraft-server-docker/internal/minecraft/properties"
 )
 
@@ -71,6 +73,32 @@ func (s *Server) Start() error {
 		return fmt.Errorf("failed to check if file '%s' exists: %e", s.JarName, err)
 	} else {
 		slog.Info("server jar already exists. using existing jar", "jar", s.JarName)
+	}
+
+	//Add players to OPs
+	ops := os.Getenv("OPS")
+	slog.Debug("ops", "env", ops)
+	if len(ops) > 0 {
+		usernames := strings.SplitSeq(ops, ",")
+		for username := range usernames {
+			err := management.AddPlayerToOpsList(username, management.OPS_LIST, s.DataDir)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	//Add players to whitelist
+	whitelist := os.Getenv("WHITELIST")
+	slog.Debug("whitelist", "env", whitelist)
+	if len(ops) > 0 {
+		usernames := strings.SplitSeq(whitelist, ",")
+		for username := range usernames {
+			err := management.AddPlayerToWhitelist(username, management.WHITELIST, s.DataDir)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	// Run server based on serverExec
