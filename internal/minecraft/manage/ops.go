@@ -1,5 +1,13 @@
 package management
 
+import (
+	"log/slog"
+	"path/filepath"
+	"strings"
+
+	"github.com/z3orc/minecraft-server-docker/internal/data/mojang"
+)
+
 type OpsListEntry struct {
 	UUID                string `json:"uuid"`
 	Name                string `json:"name"`

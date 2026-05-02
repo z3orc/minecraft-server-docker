@@ -9,7 +9,7 @@ import (
 
 	"github.com/z3orc/minecraft-server-docker/internal/data/fabric"
 	"github.com/z3orc/minecraft-server-docker/internal/jar"
-	"github.com/z3orc/minecraft-server-docker/internal/minecraft/management"
+	management "github.com/z3orc/minecraft-server-docker/internal/minecraft/manage"
 	"github.com/z3orc/minecraft-server-docker/internal/minecraft/properties"
 )
 
