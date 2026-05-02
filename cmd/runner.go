@@ -83,7 +83,7 @@ func parseFlags() *flags {
 
 	flags := flags{
 		gameVersion: gameVersion,
-		dataDir:     "./",
+		dataDir:     dataDir,
 		memory:      memory,
 		jarName:     jarName,
 		timeout:     timeout,
