@@ -1,11 +1,11 @@
-package jar
+package download
 
 import (
 	"fmt"
 	"os/exec"
 )
 
-func DownloadServerJar(url string, destDir string, jarName string) error {
+func ServerExecutable(url string, destDir string, jarName string) error {
 	cmd := exec.Command("wget", url, "-O", jarName)
 	cmd.Dir = destDir
 	err := cmd.Run()

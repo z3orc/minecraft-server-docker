@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/z3orc/minecraft-server-docker/internal/data/fabric"
-	"github.com/z3orc/minecraft-server-docker/internal/jar"
-	management "github.com/z3orc/minecraft-server-docker/internal/minecraft/manage"
+	"github.com/z3orc/minecraft-server-docker/internal/download"
+	"github.com/z3orc/minecraft-server-docker/internal/minecraft/manage"
 	"github.com/z3orc/minecraft-server-docker/internal/minecraft/properties"
 )
 
@@ -67,7 +67,7 @@ func (s *Server) Start() error {
 			return fmt.Errorf("failed get download url from fabric: %s", err)
 		}
 
-		err = jar.DownloadServerJar(url, s.DataDir, s.JarName)
+		err = download.ServerExecutable(url, s.DataDir, s.JarName)
 		if err != nil {
 			return fmt.Errorf("error while downloading server jar: %s", err)
 		}
@@ -84,7 +84,7 @@ func (s *Server) Start() error {
 		usernames := strings.SplitSeq(ops, ",")
 		for username := range usernames {
 			username = strings.TrimSpace(username)
-			err := management.AddPlayerToOpsList(username, management.OPS_LIST, s.DataDir)
+			err := manage.AddPlayerToOpsList(username, manage.OPS_LIST, s.DataDir)
 			if err != nil {
 				return err
 			}
@@ -98,7 +98,7 @@ func (s *Server) Start() error {
 		usernames := strings.SplitSeq(whitelist, ",")
 		for username := range usernames {
 			username = strings.TrimSpace(username)
-			err := management.AddPlayerToWhitelist(username, management.WHITELIST, s.DataDir)
+			err := manage.AddPlayerToWhitelist(username, manage.WHITELIST, s.DataDir)
 			if err != nil {
 				return err
 			}
