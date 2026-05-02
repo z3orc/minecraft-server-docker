@@ -94,7 +94,7 @@ func (s *Server) Start() error {
 	//Add players to whitelist
 	whitelist := os.Getenv("WHITELIST")
 	slog.Debug("whitelist", "env", whitelist)
-	if len(ops) > 0 {
+	if len(whitelist) > 0 {
 		usernames := strings.SplitSeq(whitelist, ",")
 		for username := range usernames {
 			username = strings.TrimSpace(username)
