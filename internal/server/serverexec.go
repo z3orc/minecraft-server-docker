@@ -103,11 +103,15 @@ func (s *ServerExec) SignalCatcher(timeout int, useSigKill bool) {
 		if !useSigKill {
 			slog.Warn("server has not shut down within time limit. sending SIGINT")
 			// fmt.Println("runner: Server has not shut down within the time limit; Sending SIGINT")
-			s.cmd.Process.Signal(syscall.SIGINT)
+			if s.cmd.Process != nil {
+				s.cmd.Process.Signal(syscall.SIGINT)
+			}
 		} else {
 			slog.Warn("server has not shut down within time limit. sending SIGKILL")
 			// fmt.Println("runner: Server has not shut down within the time limit; Sending SIGKILL")
-			s.cmd.Process.Kill()
+			if s.cmd.Process != nil {
+				s.cmd.Process.Kill()
+			}
 		}
 	}()
 }
