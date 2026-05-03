@@ -54,6 +54,12 @@ func (p *Properties) Add(prop string) error {
 
 // TODO: docs
 func (p *Properties) Write() error {
+	if len(p.values) <= 0 {
+		slog.Info("no properties provided, skipping")
+		return nil
+	}
+
+	slog.Info("writing properties to disk")
 	file, err := os.Create(p.path)
 	if err != nil {
 		return err

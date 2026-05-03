@@ -51,7 +51,6 @@ func (s *Server) Start() error {
 	slog.Info("preparing to start server")
 
 	// Write properties from env to file
-	slog.Info("writing properties to disk")
 	err := s.Properties.Write()
 	if err != nil {
 		return fmt.Errorf("failed to write values for server.properties to disk: %s", err)
